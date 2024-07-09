@@ -63,7 +63,7 @@ defmodule Contex.Plot do
   @default_style """
   <style type="text/css"><![CDATA[
     text {fill: black}
-    line {stroke: black}
+    line {stroke: #fff}
   ]]></style>
   """
 
