@@ -45,17 +45,32 @@ defmodule Contex.SVG do
     height = width(y_extents)
     y = min(y_extents)
     x = min(x_extents)
+    radius = 1.5
 
     attrs = opts_to_attrs(opts)
 
+    path_data = [
+      "M#{x + radius},#{y}",                # Move to the top-left corner, considering the radius
+      "h#{width - 2 * radius}",             # Draw a horizontal line to the top-right corner, considering the radius
+      "a#{radius},#{radius} 0 0 1 #{radius},#{radius}", # Draw the top-right rounded corner
+      "v#{height - radius}",                # Draw a vertical line downwards
+      "h-#{width}",                         # Draw a horizontal line to the bottom-left corner
+      "v-#{height - radius}",               # Draw a vertical line upwards
+      "a#{radius},#{radius} 0 0 1 #{radius},-#{radius}", # Draw the top-left rounded corner
+      "Z"                                   # Close the path
+    ]
+    |> Enum.join(" ")
+
     [
-      "<rect ",
-      ~s|x="#{x}" y="#{y}" width="#{width}" height="#{height}"|,
+      "<path ",
+      ~s|d="#{path_data}"|,
+      " ",
       attrs,
       ">",
       inner_content,
-      "</rect>"
+      "</path>"
     ]
+    |> Enum.join("")
   end
 
   def circle(x, y, radius, opts \\ []) do
