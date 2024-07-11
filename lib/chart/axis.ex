@@ -183,13 +183,15 @@ defmodule Contex.Axis do
   defp get_svg_axis_line(%Axis{orientation: orientation} = axis, range0, range1)
        when orientation in [:right, :left] do
     %Axis{tick_size_outer: tick_size_outer, flip_factor: k} = axis
-    ~s|M#{k * tick_size_outer},#{range0}H0.5V#{range1}H#{k * tick_size_outer}|
+    new_range = range1 / 2
+    ~s|M#{k * tick_size_outer},#{range0}H0.5V#{new_range}H#{k * tick_size_outer}|
   end
 
   defp get_svg_axis_line(%Axis{orientation: orientation} = axis, range0, range1)
        when orientation in [:top, :bottom] do
     %Axis{tick_size_outer: tick_size_outer, flip_factor: k} = axis
-    ~s|M#{range0}, #{k * tick_size_outer}V0.5H#{range1}V#{k * tick_size_outer}|
+    new_range = range1 / 2
+    ~s|M#{range0}, #{k * tick_size_outer}V0.5H#{new_range}V#{k * tick_size_outer}|
   end
 
   defp get_svg_tickmarks(%Axis{scale: scale} = axis) do
