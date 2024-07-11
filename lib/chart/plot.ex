@@ -204,9 +204,9 @@ defmodule Contex.Plot do
   """
   def to_svg(%Plot{width: width, height: height, plot_content: plot_content} = plot) do
     # Calculate necessary margins
-    %{left: left_margin, right: right_margin, top: top_margin, bottom: bottom_margin} = plot.margins
-    content_height = height - (top_margin + bottom_margin)
-    content_width = width - (left_margin + right_margin)
+    %{left: left, right: right, top: top, bottom: bottom} = plot.margins
+    content_height = height - (top + bottom)
+    content_width = width - (left + right)
 
     x_tick_label_space = if plot.plot_options.show_x_axis, do: @x_axis_tick_labels, else: 0
 
@@ -215,41 +215,34 @@ defmodule Contex.Plot do
 
     legend_left =
       case legend_setting do
-        :legend_right -> left_margin + content_width + @default_padding
-        _ -> left_margin
+        :legend_right -> left + content_width + @default_padding
+        _ -> left
       end
 
     legend_top =
       case legend_setting do
-        :legend_top -> top_margin - legend_height(legend_scales)
-        :legend_bottom -> top_margin + content_height + @default_padding + x_tick_label_space
-        _ -> top_margin + @default_padding
+        :legend_top -> top - legend_height(legend_scales)
+        :legend_bottom -> top + content_height + @default_padding + x_tick_label_space
+        _ -> top + @default_padding
       end
 
     plot_content = PlotContent.set_size(plot_content, content_width, content_height)
 
-    # Calculate viewBox dimensions to include all content
-    viewBox_width = width
-    viewBox_height = height
-
-    # Calculate SVG dimensions and viewBox
-    svg_width = viewBox_width + left_margin + right_margin
-    svg_height = viewBox_height + top_margin + bottom_margin
-
     output = [
-      ~s|<svg version="1.1" xmlns="http://www.w3.org/2000/svg" |,
+      ~s|<svg version="1.1" xmlns="http://www.w3.org/2000/svg\" |,
       ~s|xmlns:xlink="http://www.w3.org/1999/xlink" class="chart" |,
-      ~s|viewBox="0 0 #{viewBox_width} #{viewBox_height}" role="img" width="#{svg_width}" height="#{svg_height}">|,
+      ~s|viewBox="0 0 #{width} #{height}" role="img">|,
       get_default_style(plot),
       get_titles_svg(plot, content_width),
       get_axis_labels_svg(plot, content_width, content_height),
-      ~s|<g transform="translate(#{left_margin},#{top_margin})">|,
+      ~s|<g transform="translate(#{left},#{top})">|,
       PlotContent.to_svg(plot_content, plot.plot_options),
       "</g>",
       get_svg_legends(legend_scales, legend_left, legend_top, plot.plot_options),
       "</svg>"
     ]
-      {:safe, output}
+
+    {:safe, output}
   end
         @doc """
   Generates a complete XML document string.

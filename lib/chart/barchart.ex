@@ -1,28 +1,4 @@
 defmodule Contex.BarChart do
-  @moduledoc """
-  Draws a barchart from a `Contex.Dataset`.
-
-  `Contex.BarChart` will attempt to create reasonable output with minimal input. The defaults are as follows:
-  - Bars will be drawn vertically (use `orientation/2` to override - options are `:horizontal` and `:vertical`)
-  - The first column of the dataset is used as the category column (i.e. the bar), and the second
-  column is used as the value column (i.e. the bar height). These can be overridden
-  with `set_cat_col_name/2` and `set_val_col_names/2`
-  - The barchart type defaults to `:stacked`. This doesn't really matter when you only have one series (one value column)
-  but if you accept the defaults and then add another value column you will see stacked bars rather than grouped. You
-  can override this with `type/2`
-  - By default the chart will be annotated with data labels (i.e. the value of a bar will be printed on a bar). This
-  can be overridden with `data_labels/2`. This override has no effect when there are 4 or more value columns specified.
-  - By default, the padding between the data series is 2 (how this translates into pixels depends on the plot size you specify
-  when adding the barchart to a `Contex.Plot`)
-
-  By default the BarChart figures out reasonable value axes. In the case of a `:stacked` bar chart it find the maximum
-  of the sum of the values for each category and the value axis is set to {0, that_max}. For a `:grouped` bar chart the
-  value axis minimum is set to the minimum value for any category and series, and likewise, the maximum is set to the
-  maximum value for any category and series. This may not work. For example, in the situation where you want zero to be
-  shown. You can force the range by setting the `:custom_value_scale` option or `force_value_range/2` (deprecated)
-
-  """
-
   import Contex.SVG
 
   alias __MODULE__
@@ -57,7 +33,7 @@ defmodule Contex.BarChart do
     custom_value_formatter: nil,
     width: 100,
     height: 100,
-    padding: 2,
+    padding: 1,
     data_labels: true,
     colour_palette: :default,
     phx_event_handler: nil,
@@ -70,82 +46,6 @@ defmodule Contex.BarChart do
   @type plot_type() :: :stacked | :grouped
   @type selected_item() :: %{category: any(), series: any()}
 
-  @doc ~S"""
-  Creates a new barchart from a dataset and sets defaults.
-
-  Options may be passed to control the settings for the barchart. Options available are:
-
-    - `:type` : `:stacked` (default) or `:grouped`
-    - `:orientation` : `:vertical` (default) or `:horizontal`
-    - `:axis_label_rotation` : `:auto` (default), 45 or 90
-
-  Specifies the label rotation value that will be applied to the bottom axis. Accepts integer
-  values for degrees of rotation or `:auto`. Note that manually set rotation values other than
-  45 or 90 will be treated as zero. The default value is `:auto`, which sets the rotation to
-  zero degrees if the number of items on the axis is greater than eight, 45 degrees otherwise.
-
-    - `:custom_value_scale` : `nil` (default) or an instance of a suitable `Contex.Scale`.
-
-    The scale must be suitable for the data type and would typically be `Contex.ContinuousLinearScale`.
-    It is not necessary to set the range for the scale as the range is set
-    as part of the chart layout process.
-
-    - `:custom_value_formatter` : `nil` (default) or a function with arity 1
-
-  Allows the axis tick labels to be overridden. For example, if you have a numeric representation of money and you want to
-  have the value axis show it as millions of dollars you might do something like:
-
-        # Turns 1_234_567.67 into $1.23M
-        defp money_formatter_millions(value) when is_number(value) do
-          "$#{:erlang.float_to_binary(value/1_000_000.0, [decimals: 2])}M"
-        end
-
-        defp show_chart(data) do
-          BarChart.new(
-            dataset,
-            mapping: %{category_col: :column_a, value_cols: [:column_b, column_c]},
-            custom_value_formatter: &money_formatter_millions/1
-          )
-        end
-
-    - `:padding` : integer (default 2) - Specifies the padding between the category groups. Defaults to 2. Specified relative to the plot size.
-    - `:data_labels` : `true` (default) or false - display labels for each bar value
-    - `:colour_palette` : `:default` (default) or colour palette - see `colours/2`
-
-  Overrides the default colours.
-
-  Colours can either be a named palette defined in `Contex.CategoryColourScale` or a list of strings representing hex code
-  of the colour as per CSS colour hex codes, but without the #. For example:
-
-    ```
-    barchart = BarChart.new(
-        dataset,
-        mapping: %{category_col: :column_a, value_cols: [:column_b, column_c]},
-        colour_palette: ["fbb4ae", "b3cde3", "ccebc5"]
-      )
-    ```
-
-    The colours will be applied to the data series in the same order as the columns are specified in `set_val_col_names/2`
-
-    - `:phx_event_handler` : `nil` (default) or string representing `phx-click` event handler
-    - `:phx_event_target` : `nil` (default) or string representing `phx-target` for handler
-
-  Optionally specify a LiveView event handler. This attaches a `phx-click` attribute to each bar element.
-  You can specify the event_target for LiveComponents - a `phx-target` attribute will also be attached.
-
-  Note that it may not work with some browsers (e.g. Safari on iOS).
-
-    - `:select_item` - optional selected item to highlight. See `select_item/2`.
-
-    - `:mapping` : Maps attributes required to generate the barchart to columns in the dataset.
-
-  If the data in the dataset is stored as a map, the `:mapping` option is required. If the dataset
-  is not stored as a map, `:mapping` may be left out, in which case the first column will be used
-  for the category and the second column used as the value.
-  This value must be a map of the plot's `:category_col` and `:value_cols` to keys in the map,
-  such as `%{category_col: :column_a, value_cols: [:column_b, column_c]}`.
-  The value for the `:value_cols` key must be a list.
-  """
   @spec new(Contex.Dataset.t(), keyword()) :: Contex.BarChart.t()
   def new(%Dataset{} = dataset, options \\ []) when is_list(options) do
     options = Keyword.merge(@default_options, options)
