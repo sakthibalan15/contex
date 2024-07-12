@@ -416,15 +416,15 @@ defmodule Contex.BarChart do
   end
 
   defp get_svg_bar_rects(
-         {cat_band_min, cat_band_max} = cat_band,
-         bar_values,
-         labels,
-         plot,
-         fills,
-         event_handlers,
-         opacities
-       )
-       when is_number(cat_band_min) and is_number(cat_band_max) do
+    {cat_band_min, cat_band_max} = cat_band,
+    bar_values,
+    labels,
+    plot,
+    fills,
+    event_handlers,
+    opacities
+  )
+      when is_number(cat_band_min) and is_number(cat_band_max) do
     count = length(bar_values)
     indices = 0..(count - 1)
 
@@ -444,7 +444,7 @@ defmodule Contex.BarChart do
       end)
 
     texts =
-      case count < 4 and get_option(plot, :data_labels) do
+      case get_option(plot, :data_labels) do
         false ->
           []
 
@@ -455,9 +455,8 @@ defmodule Contex.BarChart do
           end)
       end
 
-    # TODO: Get nicer text with big stacks - maybe limit to two series
     [rects, texts]
-  end
+    end
 
   defp get_svg_bar_rects(_x, _y, _label, _plot, _fill, _event_handlers, _opacities), do: ""
 
@@ -491,14 +490,10 @@ defmodule Contex.BarChart do
     text(text_x, text_y, label, text_anchor: anchor, class: class, dominant_baseline: "central")
   end
 
-  defp get_svg_bar_label(_, {bar_start, _} = bar, label, cat_band, _plot) do
+  defp get_svg_bar_label(_, {_, bar_end} = bar, label, cat_band, _plot) do
     text_x = midpoint(cat_band)
 
-    {text_y, class} =
-      case width(bar) > 20 do
-        true -> {midpoint(bar), "exc-barlabel-in"}
-        _ -> {bar_start - 10, "exc-barlabel-out"}
-      end
+    {text_y, class} = {bar_end - 10, "exc-barlabel-out"}
 
     text(text_x, text_y, label, text_anchor: "middle", class: class)
   end
