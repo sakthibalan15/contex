@@ -63,7 +63,8 @@ defmodule Contex.Plot do
   @default_style """
   <style type="text/css"><![CDATA[
     @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
-    text {fill: rgba(74,74,74,255)}
+    text {fill: rgba(41,41,41,255)}
+    text {font-size: 10.8px}
     text {font-family: 'Lato', sans-serif}
     .normal_stroke line {stroke: #ffdfae}
     .white_stroke line {stroke: #fff}
