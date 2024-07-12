@@ -199,25 +199,6 @@ defmodule Contex.Plot do
     Plot.attributes(plot, width: width, height: height)
   end
 
-  defp get_x_axis_svg(content_width, content_height) do
-    """
-    <g class="x-axis">
-      <line x1="0" y1="#{content_height}" x2="#{content_width}" y2="#{content_height}" />
-      <!-- Additional tick marks and labels -->
-    </g>
-    """
-  end
-
-  defp get_y_axis_svg(content_width, content_height) do
-    """
-    <g class="y-axis">
-      <line x1="0" y1="0" x2="0" y2="#{content_height}" />
-      <!-- Additional tick marks and labels -->
-    </g>
-    """
-  end
-
-
   @doc """
   Generates SVG output marked as safe for the configured plot.
   """
@@ -248,21 +229,20 @@ defmodule Contex.Plot do
     plot_content = PlotContent.set_size(plot_content, content_width, content_height)
 
     output = [
-      ~s|<svg version="1.1" xmlns="http://www.w3.org/2000/svg" |,
+      ~s|<svg version="1.1" xmlns="http://www.w3.org/2000/svg\" |,
       ~s|xmlns:xlink="http://www.w3.org/1999/xlink" class="chart" |,
       ~s|viewBox="0 0 #{width} #{height}" role="img">|,
       get_default_style(plot),
       get_titles_svg(plot, content_width),
       get_axis_labels_svg(plot, content_width, content_height),
       ~s|<g transform="translate(#{left},#{top})">|,
-      get_x_axis_svg(content_width, content_height),
-      get_y_axis_svg(content_width, content_height),
       PlotContent.to_svg(plot_content, plot.plot_options),
       "</g>",
       get_svg_legends(legend_scales, legend_left, legend_top, plot.plot_options),
       "</svg>"
     ]
-      {:safe, output}
+
+    {:safe, output}
   end
         @doc """
   Generates a complete XML document string.
@@ -275,19 +255,8 @@ defmodule Contex.Plot do
     |> List.insert_at(0, ~s|<?xml version="1.0" encoding="utf-8"?>|)
   end
 
-  defp get_default_style(%Plot{plot_options: plot_options} = plot) do
-    x_axis_color = if plot_options[:show_x_axis], do: "#fff", else: "none"
-    y_axis_color = if plot_options[:show_y_axis], do: "#ffdfae", else: "none"
-
-    """
-    <style type="text/css"><![CDATA[
-      @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
-      text {fill: black}
-      text {font-family: 'Lato', sans-serif}
-      .x-axis line {stroke: #{x_axis_color}}
-      .y-axis line {stroke: #{y_axis_color}}
-    ]]></style>
-    """
+  defp get_default_style(%Plot{} = plot) do
+    if plot.default_style, do: @default_style, else: ""
   end
 
   defp legend_height(scales) do
