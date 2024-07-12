@@ -14,7 +14,7 @@
 
 /* Styling for axis line */
 .exc-domain {
-  stroke: #ffdfae;
+  stroke: rgb(207, 207, 207);
 }
 
 /* Styling for grid line */
