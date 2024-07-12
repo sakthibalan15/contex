@@ -3,7 +3,7 @@
 .exc-tick line {
   stroke: rgb(207, 207, 207);
 }
-
+ 
 /* Styling for tick text */
 .exc-tick text {
   fill: grey;

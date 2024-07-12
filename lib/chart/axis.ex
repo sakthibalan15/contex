@@ -110,14 +110,14 @@ defmodule Contex.Axis do
     axis = %{axis | flip_factor: get_flip_factor(axis.orientation)}
     {range0, range1} = get_adjusted_range(scale)
 
-    [
-      "<g ",
-      get_svg_axis_location(axis),
-      ~s| fill="none" font-size="10" text-anchor="#{get_text_anchor(axis)}">|,
-      ~s|<path class="exc-domain" stroke="#ffdfae" d="#{get_svg_axis_line(axis, range0, range1 )}"></path>|,
-      get_svg_tickmarks(axis),
-      "</g>"
-    ]
+      [
+        "<g ",
+        get_svg_axis_location(axis),
+        ~s| fill="none" font-size="10" text-anchor="#{get_text_anchor(axis)}">|,
+        ~s|<path class="exc-domain" stroke= "#ffdfae" d="#{get_svg_axis_line(axis, range0, range1 )}"></path>|,
+        get_svg_tickmarks(axis),
+        "</g>"
+      ]
   end
 
   @doc """
@@ -202,8 +202,9 @@ defmodule Contex.Axis do
 
   defp get_svg_tick(%Axis{orientation: orientation} = axis, tick, range_tick) do
     # Approach is to calculate transform for the tick and render tick mark with text in one go
+    stroke_color = if axis.orientation == :left, do: "normal_stroke", else: "white_stroke"
     [
-      ~s|<g class="exc-tick" opacity="1" transform=|,
+      ~s|<g class="#{stroke_color}" opacity="1" transform=|,
       get_svg_tick_transform(orientation, range_tick),
       ">",
       get_svg_tick_line(axis),
