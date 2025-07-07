@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
 /* Styling for tick line */
 .exc-tick line {
   stroke: rgb(207, 207, 207);
 }
- 
+
 /* Styling for tick text */
 .exc-tick text {
   fill: grey;
@@ -59,7 +60,7 @@
 
 /* Styling for label printed outside of a bar (e.g. if bar is too small) */
 .exc-barlabel-out {
-  color: rgba(140,147,150);
+  color: rgba(140, 147, 150);
   font-size: 0.3rem;
   font-family: 'Lato';
 }

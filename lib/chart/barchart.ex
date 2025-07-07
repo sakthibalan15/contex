@@ -416,15 +416,15 @@ defmodule Contex.BarChart do
   end
 
   defp get_svg_bar_rects(
-    {cat_band_min, cat_band_max} = cat_band,
-    bar_values,
-    labels,
-    plot,
-    fills,
-    event_handlers,
-    opacities
-  )
-      when is_number(cat_band_min) and is_number(cat_band_max) do
+         {cat_band_min, cat_band_max} = cat_band,
+         bar_values,
+         labels,
+         plot,
+         fills,
+         event_handlers,
+         opacities
+       )
+       when is_number(cat_band_min) and is_number(cat_band_max) do
     count = length(bar_values)
     indices = 0..(count - 1)
 
@@ -456,7 +456,7 @@ defmodule Contex.BarChart do
       end
 
     [rects, texts]
-    end
+  end
 
   defp get_svg_bar_rects(_x, _y, _label, _plot, _fill, _event_handlers, _opacities), do: ""
 
@@ -479,13 +479,13 @@ defmodule Contex.BarChart do
 
   defp get_svg_bar_label(:horizontal, {_, bar_end} = bar, label, cat_band, _plot) do
     text_y = midpoint(cat_band)
-    width = width(bar)
+    # width = width(bar)
 
-    {text_x, class, anchor} =
-      case width < 50 do
-        true -> {bar_end + 2, "exc-barlabel-out", "start"}
-        _ -> {midpoint(bar), "exc-barlabel-in", "middle"}
-      end
+    {text_x, class, anchor} = {bar_end + 10, "exc-barlabel-out", "start"}
+    # case width < 50 do
+    #   true -> {bar_end + 2, "exc-barlabel-out", "start"}
+    #   _ -> {midpoint(bar), "exc-barlabel-in", "middle"}
+    # end
 
     text(text_x, text_y, label, text_anchor: anchor, class: class, dominant_baseline: "central")
   end
